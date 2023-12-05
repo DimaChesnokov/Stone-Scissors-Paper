@@ -15,19 +15,21 @@ namespace WindowsFormsRockScissorsPapier
 {
     public partial class Form1 : Form
     {
-        int port = 12345;
-        StreamReader reader; //чтение
-        StreamWriter writer; //запись
-        int count = 0;
-        bool sent_hand = false;
-        bool read_hand = false;
-        string my_hand = "";
-        string op_hand = "";
+        int port = 12345;// Порт для соединения
+        StreamReader reader; // Поток для чтения
+        StreamWriter writer; // Поток для записи
+        int count = 0; // Счетчик партий
+        bool sent_hand = false;// Флаг отправки руки(хода)
+        bool read_hand = false;// Флаг получения руки(хода)
+        string my_hand = ""; // Моя рука (мой ход)
+        string op_hand = ""; // Рука оппонента (ход противника)
         public Form1()
         {
             InitializeComponent();
         }
 
+
+        // Метод для управления доступностью кнопок
         private void setButtons(bool enable)
         {
             button1.Enabled = enable;
@@ -52,10 +54,10 @@ namespace WindowsFormsRockScissorsPapier
             //try
             //{
             if (radio_server.Checked)
-                StartServer();
+                StartServer(); // Запуск сервера
 
             if (radio_client.Checked)
-                StartClient();
+                StartClient(); // Запуск клиента
 
             setButtons(true);
             timer.Enabled = true;
@@ -67,19 +69,20 @@ namespace WindowsFormsRockScissorsPapier
             //}
 
         }
-
+        //метод для запуска сервера
         private void StartServer()
         {
             //try
             //{
+
             //инициализация на каком ip адресе работать
-            TcpListener listener = new TcpListener(new IPEndPoint(IPAddress.Parse(text_ip.Text), port));
+            TcpListener listener = new TcpListener(new IPEndPoint(IPAddress.Parse(text_ip.Text), port)); // Инициализация слушателя
             listener.Start(); //запуск
-            TcpClient server = listener.AcceptTcpClient(); //создание tcp клиента для сервера. (принимаем) 
+            TcpClient server = listener.AcceptTcpClient(); //создание tcp клиента для сервера. ( Принятие клиента )
             server.ReceiveTimeout = 500;
             //потоки для чтения или записи
-            reader = new StreamReader(server.GetStream()); //получаем поток для чтения
-            writer = new StreamWriter(server.GetStream()); // для записи
+            reader = new StreamReader(server.GetStream()); // Получение потока для чтения
+            writer = new StreamWriter(server.GetStream()); // Получение потока для записи
             writer.AutoFlush = true;
             //}
             //catch
@@ -88,16 +91,18 @@ namespace WindowsFormsRockScissorsPapier
             //}
         }
 
+
+        //Метод для запуска клиента
         private void StartClient()
         {
 
 
-
+            // Создание нового клиента
             TcpClient client = new TcpClient();
-            client.Connect(text_ip.Text, port);
+            client.Connect(text_ip.Text, port);  // Подключение к серверу по указанному IP и порту
             client.ReceiveTimeout = 500;
-            reader = new StreamReader(client.GetStream());
-            writer = new StreamWriter(client.GetStream());
+            reader = new StreamReader(client.GetStream()); // Получение потока для чтения
+            writer = new StreamWriter(client.GetStream()); // Получение потока для записи
 
             writer.AutoFlush = true;
 
@@ -118,16 +123,20 @@ namespace WindowsFormsRockScissorsPapier
             send("Бумага");
         }
 
+        /// <summary>
+        /// Метод для отправки данных о ходе
+        /// </summary>
+        /// <param name="text">Ход</param>
         private void send(string text)
         {
             //try
             //{
             if (sent_hand)
                 return;
-            writer.WriteLine(text);
-            // text_debug.Text = text_debug.Text + "Отправлено: " + text + Environment.NewLine;
-            sent_hand = true;
-            my_hand = text;
+            writer.WriteLine(text);// Отправка текста через поток
+
+            sent_hand = true; // Установка флага отправки
+            my_hand = text; //Запись моего хода
             setButtons(false);
             //text_debug.Text = text_debug.Text + "Отправлено: " + text + Environment.NewLine;
             //}
@@ -139,6 +148,11 @@ namespace WindowsFormsRockScissorsPapier
 
         }
 
+
+        /// <summary>
+        /// Метод для чтения танных
+        /// </summary>
+        /// <returns></returns>
         private string read()
         {
 
@@ -147,14 +161,11 @@ namespace WindowsFormsRockScissorsPapier
             try
             {
                 string text;
-                text = reader.ReadLine();
+                text = reader.ReadLine(); // Чтение текста из потока
                 // text_debug.Text = text_debug.Text +ы "Прочитано: " + text + Environment.NewLine;
-                read_hand = true;
-                op_hand = text;
-
-
-
-                return text;
+                read_hand = true; // Установка флага получения
+                op_hand = text;// Запись хода оппонента
+                return text; // возращаем выбранный ход
             }
             catch
             {
@@ -162,7 +173,7 @@ namespace WindowsFormsRockScissorsPapier
             }
 
         }
-
+        //  обновление информации и проверка результата
         private void timer_Tick(object sender, EventArgs e)
         {
 
