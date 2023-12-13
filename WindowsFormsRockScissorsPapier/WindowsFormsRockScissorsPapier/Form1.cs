@@ -35,9 +35,8 @@ namespace WindowsFormsRockScissorsPapier
             button1.Enabled = enable;
             button2.Enabled = enable;
             button3.Enabled = enable;
-            button_clear.Enabled = enable;
+            
         }
-
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -51,8 +50,7 @@ namespace WindowsFormsRockScissorsPapier
 
         private void button_start_Click(object sender, EventArgs e)
         {
-            //try
-            //{
+   
             if (radio_server.Checked)
                 StartServer(); // Запуск сервера
 
@@ -63,17 +61,14 @@ namespace WindowsFormsRockScissorsPapier
             timer.Enabled = true;
             text_debug.Text = text_debug.Text + "Соеднинение установлено" + Environment.NewLine;
             button_start.Enabled = false;
-            //}
-            //{
-            //    MessageBox.Show("Убедитесь, что выбрали сервер и клиент");
-            //}
+            button_clear.Enabled = false;
+            
 
         }
         //метод для запуска сервера
         private void StartServer()
         {
-            //try
-            //{
+
 
             //инициализация на каком ip адресе работать
             TcpListener listener = new TcpListener(new IPEndPoint(IPAddress.Parse(text_ip.Text), port)); // Инициализация слушателя
@@ -84,11 +79,7 @@ namespace WindowsFormsRockScissorsPapier
             reader = new StreamReader(server.GetStream()); // Получение потока для чтения
             writer = new StreamWriter(server.GetStream()); // Получение потока для записи
             writer.AutoFlush = true;
-            //}
-            //catch
-            //{
-            //    MessageBox.Show("Убедитесь, что выбрали сервер - клиент");
-            //}
+
         }
 
 
@@ -137,13 +128,10 @@ namespace WindowsFormsRockScissorsPapier
 
             sent_hand = true; // Установка флага отправки
             my_hand = text; //Запись моего хода
+            if(op_hand == "")
+                text_debug.Text = text_debug.Text + "Отправлено: " + "Ожидание хода противника" + Environment.NewLine;
             setButtons(false);
-            //text_debug.Text = text_debug.Text + "Отправлено: " + text + Environment.NewLine;
-            //}
-            //catch
-            //{
-            //    MessageBox.Show("Убедитесь, что выбрали сервер - клиент");
-            //}
+
 
 
         }
@@ -162,10 +150,12 @@ namespace WindowsFormsRockScissorsPapier
             {
                 string text;
                 text = reader.ReadLine(); // Чтение текста из потока
-                // text_debug.Text = text_debug.Text +ы "Прочитано: " + text + Environment.NewLine;
                 read_hand = true; // Установка флага получения
                 op_hand = text;// Запись хода оппонента
+                text_debug.Text = text_debug.Text + "Получено: " + "противник походил" + Environment.NewLine;
+
                 return text; // возращаем выбранный ход
+
             }
             catch
             {
@@ -177,22 +167,18 @@ namespace WindowsFormsRockScissorsPapier
         private void timer_Tick(object sender, EventArgs e)
         {
 
-            //string  s = ()
-            string hand = read();
-            if (my_hand != "" & op_hand != "")
-            {
-                count = count + 1;
-                text_debug.Text = text_debug.Text + "Партия " + count + Environment.NewLine;
-                text_debug.Text = text_debug.Text + "Отправлено: " + my_hand + Environment.NewLine;
-                text_debug.Text = text_debug.Text + "Прочитано: " + op_hand + Environment.NewLine;
 
-            }
+            string hand = read();
+
 
 
             if (sent_hand && read_hand)
             {
-
+                count = count + 1;
+                text_debug.Text = text_debug.Text + "Партия " + count + Environment.NewLine;
                 ResultGame();
+                button_clear.Enabled = true;
+                my_hand = "";
                 text_debug.Text = text_debug.Text + " " + Environment.NewLine;
             }
 
@@ -215,7 +201,8 @@ namespace WindowsFormsRockScissorsPapier
             setButtons(true);
             my_hand = "";
             op_hand = "";
-            System.Threading.Thread.Sleep(1000);
+            System.Threading.Thread.Sleep(500);
+
         }
 
         private string CompareHand(string hand1, string hand2)

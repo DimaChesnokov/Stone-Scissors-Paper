@@ -157,9 +157,9 @@ namespace WindowsFormsRockScissorsPapier
             // 
             this.button_clear.Enabled = false;
             this.button_clear.Font = new System.Drawing.Font("Times New Roman", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button_clear.Location = new System.Drawing.Point(642, 304);
+            this.button_clear.Location = new System.Drawing.Point(765, 33);
             this.button_clear.Name = "button_clear";
-            this.button_clear.Size = new System.Drawing.Size(133, 36);
+            this.button_clear.Size = new System.Drawing.Size(10, 11);
             this.button_clear.TabIndex = 9;
             this.button_clear.Text = "Очистить";
             this.button_clear.UseVisualStyleBackColor = true;
